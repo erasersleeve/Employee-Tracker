@@ -222,7 +222,7 @@ function addEmployee() {
     });
  };
  
- function removeEmployee() {
+function removeEmployee() {
    let employeeArr = [];
    let query = "SELECT first_name, last_name FROM employee";
    connection.query(query, function(err, res){
@@ -272,14 +272,83 @@ function addEmployee() {
          } 
        ) 
      })
-   
-  
    });
-   
- };
- function updateRole() {
-   
- };
+};
+function updateRole(){
+  let employeeArr = [];
+  connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      // console.log(res[i].first_name, res[i].last_name);
+      var employeeSelect = res[i].first_name + " " + res[i].last_name;
+      employeeArr.push(employeeSelect);
+    }
+    // console.log(employeeSelect);
+    console.log("Employee Array bby  "+employeeArr);
+    inquirer
+      .prompt({
+        name: "delete",
+        message: "Which employee would you like to update?",
+        type: "list",
+        choices: employeeArr
+      }).then(function(deleteData){
+        connection.query("SELECT employee_id FROM employee WHERE ? AND ?",
+          [{
+          first_name: deleteData.delete.split(" ")[0]
+          },{
+          last_name: deleteData.delete.split(" ")[1]
+          }],
+          function(err, employId) {
+            if (err) throw err;
+            console.log(employId[0].employee_id);
+            let updateArr = [];
+            connection.query("SELECT title FROM role", function(err, res){
+              if (err) throw err;
+              for (var i = 0; i < res.length; i++) {
+                let updateSelect = res[i].title;
+                updateArr.push(updateSelect);
+              }
+              inquirer.prompt([
+                {
+                  name:"update",
+                  message: "What role does this employee now fill?",
+                  type: "list",
+                  choices: updateArr
+                }
+              ]).then(function(updateData){
+                let newRole = updateData.update;
+                // console.log("NEW ROLE DATA" +newRole);
+                connection.query("SELECT id FROM role WHERE ?",
+                  {
+                    title: newRole
+                  },
+                function(err, roleIdData) {
+                  if (err) throw err;
+                  // console.log("Role id thing  " +roleIdData[0].id);
+                  connection.query("UPDATE employee SET ? WHERE ?",
+                  [{
+                    role_id: roleIdData[0].id
+                  },
+                  {
+                   employee_id: employId[0].employee_id
+                  }],
+                  function(err, res) {
+                    if(err) throw err;
+                  console.log("Updated");
+                  init();
+                  }
+                  )
+                }
+                )
+
+              })
+            })
+
+          }
+        )
+      })
+  })
+};
 function viewRoles() {
   var query = "SELECT r.title AS Title, r.salary AS Salary, d.name AS Department FROM role r LEFT JOIN department d ON r.department_id = d.id;";
   connection.query(query, function(err, res) {
