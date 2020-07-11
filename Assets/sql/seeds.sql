@@ -1,8 +1,26 @@
--- INSERT INTO employee (first_name, last_name)
--- VALUES ("Jerry", "Seinfeld"),("George", "Costanza");
-
 INSERT INTO department (name) 
-VALUES ("engineering"),("sales"),("legal"),("finance");
+VALUES ("Engineering"),("Sales"),("Legal"),("Finance");
 
-INSERT INTO role (title, salary)
-VALUES ("Sales Lead", 100000),("Sales Person", 80000),("Lead Engineer", 150000),("Software Engineer", 120000), ("Legal Team Lead", 250000), ("Lawyer", 190000),("Accountant", 125000);
+INSERT INTO role (title, salary, department_id)
+VALUES ("Sales Lead", 100000, 2),("Sales Person", 80000, 2),("Lead Engineer", 150000, 1),("Software Engineer", 120000, 1), ("Legal Team Lead", 250000, 3), ("Lawyer", 190000, 3),("Accountant", 125000, 4);
+
+INSERT INTO employee (first_name, last_name, role_id)
+VALUES ("Jerry", "Seinfeld", 1),("George", "Costanza", 2);
+
+
+
+SELECT * FROM employee;
+SELECT * FROM role;
+SELECT * FROM department;
+
+SELECT e.first_name, e.last_name, r.title, d.name
+FROM employee e
+INNER JOIN role r ON e.role_id = r.id
+INNER JOIN department d ON r.department_id = d.id;
+
+
+SELECT e.first_name, e.last_name, r.title, r.salary, d.name AS department_name, CONCAT(e2.first_name," ", e2.last_name) AS manager_name
+FROM employee e
+LEFT JOIN employee e2 ON e.manager_id = e2.employee_id
+LEFT JOIN role r ON e.role_id = r.id
+LEFT JOIN department d ON r.department_id = d.id;

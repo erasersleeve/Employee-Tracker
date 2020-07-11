@@ -4,6 +4,7 @@
   "description": "Content Management System for employees using MySQL, inquirer, and node.",
   "main": "server.js",
   "dependencies": {
+    "console.table": "^0.10.0",
     "inquirer": "^7.3.1",
     "mysql": "^2.18.1"
   },
