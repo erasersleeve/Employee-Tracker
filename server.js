@@ -107,14 +107,8 @@ function viewEmployees() {
   LEFT JOIN department d ON r.department_id = d.id`;
   connection.query(query, function(err, res) {
     if (err) throw err;
-    // console.log(res);
     console.log("\n");
-    // console.log(res);
     console.table(res);
-    // for (var i = 0; i < res.length; i++) {
-      
-    //   console.log("First Name: " + res[i].first_name + " || Last Name: " + res[i].last_name + " || Title: " + res[i].title + " || Manager: "+res[i].manager_name+" || Department: " + res[i].name + " || Salary: " +res[i].salary);
-    // }
   });
   init();
 };
@@ -194,21 +188,18 @@ function viewDepartment(){
     })
 };
 function addEmployee() {
-  // Query to allow selection of manager from list of other employees on file
-  //Currently, if there are no available   
+  // Query to allow selection of manager from list of other employees on file  
   let employeeArr = ["No Manager"];
     let query = "SELECT first_name, last_name FROM employee";
     connection.query(query, function(err, res){
       if (err) throw err;
-      // console.log(res);
-      // console.log("\n");
+      
       for (var i = 0; i < res.length; i++) {
-        // console.log(res[i].first_name, res[i].last_name);
+        
         let employeeSelect = res[i].first_name + " " + res[i].last_name;
-        // console.log(employeeSelect);
+    
         employeeArr.push(employeeSelect);
       }
-        // console.log(employeeArr);
         //inquirer to add employee
        inquirer
        .prompt([
@@ -261,7 +252,7 @@ function addEmployee() {
              }],
              function(err, res2) {
                if(err) throw err;
-               // consolelog(first_name, last_name);
+               
                connection.query(
                  "INSERT INTO employee SET ?",
                  {
@@ -305,15 +296,11 @@ function removeEmployee() {
    let query = "SELECT first_name, last_name FROM employee";
    connection.query(query, function(err, res){
      if (err) throw err;
-     // console.log(res);
-     // console.log("\n");
+     
      for (var i = 0; i < res.length; i++) {
-       // console.log(res[i].first_name, res[i].last_name);
        let employeeSelect = res[i].first_name + " " + res[i].last_name;
-       // console.log(employeeSelect);
        employeeArr.push(employeeSelect);
      }
-     // console.log(employeeArr);
      inquirer
      .prompt([
        {
@@ -357,11 +344,9 @@ function updateRole(){
   connection.query("SELECT first_name, last_name FROM employee", function(err, res) {
     if (err) throw err;
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].first_name, res[i].last_name);
       var employeeSelect = res[i].first_name + " " + res[i].last_name;
       employeeArr.push(employeeSelect);
     }
-    // console.log(employeeSelect);
     console.log("Employee Array bby  "+employeeArr);
     inquirer
       .prompt({
@@ -395,14 +380,12 @@ function updateRole(){
                 }
               ]).then(function(updateData){
                 let newRole = updateData.update;
-                // console.log("NEW ROLE DATA" +newRole);
                 connection.query("SELECT id FROM role WHERE ?",
                   {
                     title: newRole
                   },
                 function(err, roleIdData) {
                   if (err) throw err;
-                  // console.log("Role id thing  " +roleIdData[0].id);
                   connection.query("UPDATE employee SET ? WHERE ?",
                   [{
                     role_id: roleIdData[0].id
@@ -433,10 +416,6 @@ function viewRoles() {
     if(err) throw err;
     console.log("\n");
     console.table(res);
-    // for (var i = 0; i < res.length; i++) {
-    //   //Need to do something to have department show instead of department ID
-    //   console.log("Title: " + res[i].title + " || Salary: " + res[i].salary + " || Department: " + res[i].department_id);
-    // }
   });
   init();
 };
@@ -445,12 +424,8 @@ function addRole(){
     let query = "SELECT name FROM department";
     connection.query(query, function(err, res){
       if (err) throw err;
-      // console.log(res);
-      // console.log("\n");
       for (var i = 0; i < res.length; i++) {
-        // console.log(res[i].first_name, res[i].last_name);
         let departmentSelect = res[i].name;
-        // console.log(employeeSelect);
         departmentArr.push(departmentSelect);
       }
       inquirer
@@ -531,15 +506,10 @@ function removeDepartment(){
   let query = "SELECT name FROM department";
   connection.query(query, function(err, res){
     if (err) throw err;
-    // console.log(res);
-    // console.log("\n");
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].first_name, res[i].last_name);
       let departmentSelect = res[i].name;
-      // console.log(employeeSelect);
       departmentArr.push(departmentSelect);
     }
-    // console.log(employeeArr);
     inquirer
     .prompt([
       {
@@ -561,40 +531,20 @@ function removeDepartment(){
           if(err) throw err;
           console.log("_____________");
           console.log("ID to be deleted: "+res2[0].id);
-     
-     //trying to delete from department like this causes a foreign key constraint problem
-     
-          // connection.query(
-          //   "DELETE FROM department WHERE ?",
-          //   {
-          //     id: res2[0].id 
-          //   },
-          //   function(err, res) {
-          //     if (err) throw err;
-          //     console.log(res.affectedRows + " Department deleted \n");
-          //     init();
-          //   }
-          //   )
         } 
       ) 
     })
   });
 };
 function getEmpArr() {
-  // Query to allow selection of manager from list of other employees on file
   let employeeArr = ["This employee has no manager"];
   let query = "SELECT first_name, last_name FROM employee";
   connection.query(query, function(err, res){
     if (err) throw err;
-    // console.log(res);
-    // console.log("\n");
     for (var i = 0; i < res.length; i++) {
-      // console.log(res[i].first_name, res[i].last_name);
       let employeeSelect = res[i].first_name + " " + res[i].last_name;
-      // console.log(employeeSelect);
       employeeArr.push(employeeSelect);
     }
-    // console.log(employeeArr);
   });
  return employeeArr;
 };
