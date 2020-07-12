@@ -6,14 +6,8 @@ var roleId = "";
 
 var connection = mysql.createConnection({
     host: "localhost",
-  
-    // Your port; if not 3306
     port: 3306,
-  
-    // Your username
     user: "root",
-  
-    // Your password
     password: "anorak3/pigeon",
     database: "tracker_db"
   });
@@ -33,6 +27,8 @@ var connection = mysql.createConnection({
         message: "What would you like to do?",
         choices: [
         "View All Employees",
+        "View All Employees by Department",
+        "View All Employees by Manager",
         "Add Employee",
         "Update Employee Role",
         "Update Employee Manager",
@@ -41,8 +37,7 @@ var connection = mysql.createConnection({
         "Add Role",
         "View All Departments",
         "Add Department",
-        "View All Employees by Department",
-        "View All Employees by Manager",
+        "Remove Department",
         "exit"
       ]
     })
@@ -51,42 +46,49 @@ var connection = mysql.createConnection({
         case "View All Employees":
         viewEmployees();
         break;
-        case "View All Roles":
-        viewRoles();
-        break;
-        case "View All Departments":
-        viewDepartments();
-        break;
-        case "View All Employees by Department":
         
+        case "View All Employees by Department":
+        viewDepartment();
         break;
 
-        case "View All Employees by Manager":
-        viewManager();
-        break;
+        // case "View All Employees by Manager":
+        // viewManager();
+        // break;
 
         case  "Add Employee":
         addEmployee();       
-        break;
-
-        case "Remove Employee":
-        removeEmployee();
-        break;
-        
-        case "Add Role":
-        addRole();
-        break;
-
-        case "Add Department":
-        addDepartment();
         break;
 
         case "Update Employee Role":
         updateRole();
         break;
 
-        case "Update Employee Manager":
+        // case "Update Employee Manager":
 
+        // break;
+
+        case "Remove Employee":
+        removeEmployee();
+        break;
+        
+        case "View All Roles":
+        viewRoles();
+        break;
+        
+        case "Add Role":
+        addRole();
+        break;
+        
+        case "View All Departments":
+        viewDepartments();
+        break;
+        
+        case "Add Department":
+        addDepartment();
+        break;
+        
+        case "Remove Department":
+        removeDepartment();
         break;
 
         case "exit":
@@ -107,6 +109,7 @@ function viewEmployees() {
     if (err) throw err;
     // console.log(res);
     console.log("\n");
+    // console.log(res);
     console.table(res);
     // for (var i = 0; i < res.length; i++) {
       
@@ -114,6 +117,81 @@ function viewEmployees() {
     // }
   });
   init();
+};
+function viewManager() {
+  
+};
+function viewDepartment(){
+  var departmentArr = [];
+  let query = "SELECT name FROM department";
+  connection.query(query, function(err, res){
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      let departmentSelect = res[i].name;
+      departmentArr.push(departmentSelect);
+    }
+    inquirer.prompt(
+      {
+        name: "depart",
+        message: "Which department would you like to view?",
+        type: "list",
+        choices: departmentArr
+      }
+    ).then(function(viewDepartmentData){
+      console.log(viewDepartmentData.depart);
+      connection.query("SELECT id FROM department WHERE ?",
+      {
+        name: viewDepartmentData.depart
+      },
+      function(err, res) {
+        if (err) throw err;
+        // console.log(res[0].id);
+        var query = `SELECT id FROM role WHERE ?`;
+        connection.query(query, 
+          [{
+            department_id: res[0].id
+          }],
+        async function(err, res2){
+          if (err) throw (err);
+          // console.log(res2[0]);
+          // console.log(res2[1]);     
+          
+          let query = `SELECT employee_id FROM employee WHERE ?`;
+          var byDepartmentArr = [];
+          for (var i=0; i<res2.length; i++) {
+            connection.query(query, 
+              [{
+                role_id: res2[i].id
+              }],
+              function(err, res3){
+                if (err) throw (err);
+                query= `SELECT e.first_name AS "First Name", e.last_name AS "Last Name", r.title AS Title, r.salary AS Salary
+                FROM employee e
+                LEFT JOIN role r ON e.role_id = r.id
+                WHERE ?`;
+                connection.query(query,
+                  [{
+                    employee_id: res3[0].employee_id
+                  }],
+                  function(err, res4){
+                    if (err) throw err;
+                    // console.log(res4[0]);
+                    let objSelect = res4[0];
+                    byDepartmentArr.push(objSelect);
+                    
+
+                  }
+                  )
+              }
+              )
+          }  
+        
+        }
+        ).then(console.log(byDepartmentArr))
+      }
+      )
+    })
+    })
 };
 function addEmployee() {
   // Query to allow selection of manager from list of other employees on file
@@ -449,7 +527,58 @@ function addDepartment(){
     })
 };
 function removeDepartment(){
-
+  let departmentArr = [];
+  let query = "SELECT name FROM department";
+  connection.query(query, function(err, res){
+    if (err) throw err;
+    // console.log(res);
+    // console.log("\n");
+    for (var i = 0; i < res.length; i++) {
+      // console.log(res[i].first_name, res[i].last_name);
+      let departmentSelect = res[i].name;
+      // console.log(employeeSelect);
+      departmentArr.push(departmentSelect);
+    }
+    // console.log(employeeArr);
+    inquirer
+    .prompt([
+      {
+       name: "delete",
+       type: "list",
+       message: "Which department would you like to remove from the tracker?",
+       choices: departmentArr 
+      }
+    ])
+    .then(function(deleteData){
+      console.log("++++++++++++++++"+deleteData.delete);
+      console.log("Deleting department...\n");
+      connection.query(
+        "SELECT id FROM department WHERE ?",
+        {
+          name: deleteData.delete
+        },
+        function(err, res2) {
+          if(err) throw err;
+          console.log("_____________");
+          console.log("ID to be deleted: "+res2[0].id);
+     
+     //trying to delete from department like this causes a foreign key constraint problem
+     
+          // connection.query(
+          //   "DELETE FROM department WHERE ?",
+          //   {
+          //     id: res2[0].id 
+          //   },
+          //   function(err, res) {
+          //     if (err) throw err;
+          //     console.log(res.affectedRows + " Department deleted \n");
+          //     init();
+          //   }
+          //   )
+        } 
+      ) 
+    })
+  });
 };
 function getEmpArr() {
   // Query to allow selection of manager from list of other employees on file
