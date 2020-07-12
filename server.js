@@ -27,11 +27,11 @@ var connection = mysql.createConnection({
         message: "What would you like to do?",
         choices: [
         "View All Employees",
-        "View All Employees by Department",
-        "View All Employees by Manager",
+        // "View All Employees by Department",
+        // "View All Employees by Manager",
         "Add Employee",
         "Update Employee Role",
-        "Update Employee Manager",
+        // "Update Employee Manager",
         "Remove Employee",
         "View All Roles",
         "Add Role",
@@ -47,9 +47,9 @@ var connection = mysql.createConnection({
         viewEmployees();
         break;
         
-        case "View All Employees by Department":
-        viewDepartment();
-        break;
+        // case "View All Employees by Department":
+        // viewDepartment();
+        // break;
 
         // case "View All Employees by Manager":
         // viewManager();
