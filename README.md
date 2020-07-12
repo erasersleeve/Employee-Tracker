@@ -5,6 +5,8 @@
   ## Table of Contents
   *  [Installation](#Installation)
   *  [Usage](#Usage)
+  *  [Videos](#Videos)
+  *  [Images](#Images)
   *  [License](#License)
   *  [Contributing](#Contributing)
   *  [Tests](#Tests)
@@ -16,6 +18,13 @@
 
   ## Usage
   Launch the application from the command line and respond to the prompts as appropriate. Starter, generic, seeds have been provided for demonstration purposes or quick start.
+  
+  ## Videos:
+  A video guide can be found here: (https://github.com/erasersleeve/Employee-Tracker/blob/master/Assets/video_guide/video_guide.webm)
+  Simply click on the download (view raw) link on github to view the video.
+  ## Images
+  ![1](https://github.com/erasersleeve/Employee-Tracker/blob/master/Assets/images/Capture%20d%E2%80%99%C3%A9cran%20(30).png?raw=true)
+  
   ## License
   None
   ## Contributing
