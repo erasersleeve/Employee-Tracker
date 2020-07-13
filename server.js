@@ -37,7 +37,7 @@ var connection = mysql.createConnection({
         "Add Role",
         "View All Departments",
         "Add Department",
-        "Remove Department",
+        // "Remove Department",
         "exit"
       ]
     })
@@ -87,9 +87,9 @@ var connection = mysql.createConnection({
         addDepartment();
         break;
         
-        case "Remove Department":
-        removeDepartment();
-        break;
+        // case "Remove Department":
+        // removeDepartment();
+        // break;
 
         case "exit":
         connection.end();
